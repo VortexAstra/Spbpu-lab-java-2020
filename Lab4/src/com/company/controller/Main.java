@@ -1,10 +1,20 @@
-package com.company;
+package com.company.controller;
+
+import com.company.dataBaseConnect.ConnectDB;
+import com.company.property.PropertyColorPrint;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.sql.*;
 import java.util.Scanner;
 
-public class Main {
+public class Main extends Application {
+
 	public static void main(String[] args) {
+
 		try {
 			ConnectDB.connect();
 			ps = ConnectDB.connection.prepareStatement("INSERT INTO goods (prodid, title, cost) VALUES (?, ?, ?)");
@@ -17,11 +27,10 @@ public class Main {
 			e.printStackTrace();
 		}
 		System.out.println("Доступные команды: \n 1 - Show  \n 2 - Add  \n 3 - Delete \n 4 - Price \n 5 - ChangePrice " +
-				"\n 6 - FilterByPrice \n 7 - Exit ");
+				"\n 6 - FilterByPrice  \n 7 - Graphics \n 8 - Exit ");
 
-		boolean flag = true;
 		try {
-			while (flag) {
+			while (true) {
 				System.out.println("Enter your request");
 				String s = in.next();
 				switch (s) {
@@ -42,27 +51,28 @@ public class Main {
 						break;
 					case "FilterByPrice":
 						filterByPrice();
+					case "Graphics":
+						launch(args);
 					case "Exit":
+						System.out.println("Disconnect....");
 						ConnectDB.disconnect();
-						flag = false;
+						System.exit(0);
 						break;
+					default:
+						System.out.println(PropertyColorPrint.ANSI_RED + "ENTER CORRECT REQUEST!!!!" + PropertyColorPrint.ANSI_RED);
+						System.out.println(PropertyColorPrint.ANSI_BLACK);
 				}
 				in.nextLine();
 			}
-
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
+	private static void fill() throws SQLException {
 
-	static PreparedStatement ps;
-	static Scanner in = new Scanner(System.in);
-
-	static void fill() throws SQLException {
-
-		for (int i = 1; i <= 3; i++) {
+		for (int i = 1; i <= 20; i++) {
 			ps.setInt(1, (i + 4200));
 			ps.setString(2, "product" + i);
 			ps.setInt(3, i * 10);
@@ -71,23 +81,24 @@ public class Main {
 		System.out.println("Fill BD");
 	}
 
-	static void add() throws SQLException {
+	public static void add() throws SQLException {
 
 		System.out.println("Write the name of the product");
 		String title = in.nextLine();
-		System.out.println("Введите prodid товара");
-		String prodid = in.nextLine();
-		System.out.println("Введите cost товара");
-		String cost = in.nextLine();
+		String titleOfProduct = in.nextLine();
+		System.out.println("Write prodid of the product");
+		int prodid = in.nextInt();
+		System.out.println("Write cost of the product");
+		int cost = in.nextInt();
 
-		ps.setInt(1, Integer.parseInt((prodid)));
-		ps.setString(2, title);
-		ps.setInt(3, Integer.parseInt(cost));
+		ps.setInt(1, prodid);
+		ps.setString(2, titleOfProduct);
+		ps.setInt(3, cost);
 		ps.executeUpdate();
 		System.out.println("Success adding");
 	}
 
-	static void delete() throws SQLException {
+	public static void delete() throws SQLException {
 		System.out.println("Enter the ID of the product you want to REMOVE");
 		int id = in.nextInt();
 		if (isExistItem(id)) {
@@ -97,40 +108,46 @@ public class Main {
 			System.out.println("DON't HAVE THIS ID!");
 	}
 
-	static void infoPrice() throws SQLException {
+	public static void infoPrice() throws SQLException {
 		System.out.println("Enter the name of the product, whose price you want to know");
 		String s1 = in.nextLine();
+		String infoPrice = in.nextLine();
 		PreparedStatement preparedStatement = ConnectDB.connection.prepareStatement("select * " +
 				"from Goods where title = ?");
-		preparedStatement.setString(1, s1);
+		preparedStatement.setString(1, infoPrice);
 		ResultSet resultSet = preparedStatement.executeQuery();
 		while (resultSet.next()) {
+			System.out.println("Product is being searched......" + "\nProduct successfully found ");
 			System.out.println("cost - " + resultSet.getString("cost"));
 		}
 	}
 
-	static void changePrice() throws SQLException {
-		System.out.println("Enter the name of the product\n");
+	public static void changePrice() throws SQLException {
+		System.out.println("Enter the name of the product");
 		String title = in.nextLine();
-		if (isExistItem(title)) {
+		String titleOfProduct = in.nextLine();
+		if (isExistItem(titleOfProduct)) {
 			System.out.print("Enter the new price\n");
 			int newPrice = in.nextInt();
 			ConnectDB.statement.executeUpdate("UPDATE test.Goods SET cost = " + newPrice +
-					" WHERE title = '" + title + "'");
+					" WHERE title = '" + titleOfProduct + "'");
 			System.out.println("Price changed successfully.");
 		} else
 			System.out.println("DON't HAVE THIS PRODUCT!");
 	}
 
-	static void filterByPrice() throws SQLException {
-		float num1 = in.nextFloat();
-		float num2 = in.nextFloat();
-		if ((num1 > 0) & (num2 > 0)) {
-			ResultSet resultSet= ConnectDB.statement.executeQuery("SELECT title " +
-					"cost FROM goods WHERE cost BETWEEN " + num1 + " AND " + num2);
+	public static void filterByPrice() throws SQLException {
+		System.out.println("From");
+		int firstNumber = in.nextInt();
+		System.out.println("Before");
+		int secondNumber = in.nextInt();
+		if ((firstNumber >= 0) && (secondNumber >= 0)) {
+			ResultSet resultSet = ConnectDB.statement.executeQuery("SELECT prodid, title " +
+					"FROM goods WHERE cost BETWEEN " + firstNumber + " AND " + secondNumber);
 			if (resultSet.next()) {
 				while (resultSet.next()) {
-					System.out.println(resultSet.getString(1) + ", " + resultSet.getInt(2));
+					System.out.println("Prodid - " + resultSet.getString(1) + " Title - " +
+							resultSet.getString(2));
 				}
 			} else {
 				System.out.println("Your query did not return results.");
@@ -138,10 +155,9 @@ public class Main {
 		} else {
 			System.out.println("Enter positive numbers");
 		}
-
 	}
 
-	static boolean isExistItem(int IDOfItem) {
+	private static boolean isExistItem(int IDOfItem) {
 		try {
 			ResultSet resultSet = ConnectDB.statement.executeQuery("SELECT title, cost FROM test.goods " +
 					"WHERE ID='" + IDOfItem + "';");
@@ -152,7 +168,7 @@ public class Main {
 		return false;
 	}
 
-	static boolean isExistItem(String title) {
+	public static boolean isExistItem(String title) {
 		try {
 			ResultSet resultSet = ConnectDB.statement.executeQuery("SELECT title, cost FROM test.goods " +
 					"WHERE title='" + title + "';");
@@ -163,7 +179,7 @@ public class Main {
 		return false;
 	}
 
-	static void showAllInfoDB() throws SQLException {
+	private static void showAllInfoDB() throws SQLException {
 		//Экземпляр ResultSet имеет указатель, который указывает на текущую строку в полученном множестве.
 		ResultSet resultSet = ConnectDB.statement.executeQuery("select * from Goods");
 		while (resultSet.next()) {
@@ -175,4 +191,14 @@ public class Main {
 		}
 	}
 
+	static PreparedStatement ps;
+	static Scanner in = new Scanner(System.in);
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		Parent root = FXMLLoader.load(getClass().getResource("controller.fxml"));
+		primaryStage.setTitle("GUI BD");
+		primaryStage.setScene(new Scene(root));
+		primaryStage.show();
+	}
 }
