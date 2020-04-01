@@ -64,7 +64,7 @@ public class Main extends Application {
 				}
 				in.nextLine();
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | NumberFormatException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
@@ -82,30 +82,38 @@ public class Main extends Application {
 	}
 
 	public static void add() throws SQLException {
+		try {
+			System.out.println("Write the name of the product");
+			String title = in.nextLine();
+			String titleOfProduct = in.nextLine();
+			System.out.println("Write prodid of the product");
+			int prodid = in.nextInt();
+			System.out.println("Write cost of the product");
+			int cost = in.nextInt();
 
-		System.out.println("Write the name of the product");
-		String title = in.nextLine();
-		String titleOfProduct = in.nextLine();
-		System.out.println("Write prodid of the product");
-		int prodid = in.nextInt();
-		System.out.println("Write cost of the product");
-		int cost = in.nextInt();
-
-		ps.setInt(1, prodid);
-		ps.setString(2, titleOfProduct);
-		ps.setInt(3, cost);
-		ps.executeUpdate();
-		System.out.println("Success adding");
+			ps.setInt(1, prodid);
+			ps.setString(2, titleOfProduct);
+			ps.setInt(3, cost);
+			ps.executeUpdate();
+			System.out.println("Success adding");
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void delete() throws SQLException {
-		System.out.println("Enter the ID of the product you want to REMOVE");
-		int id = in.nextInt();
-		if (isExistItem(id)) {
-			ps.executeUpdate("DELETE FROM Goods WHERE ID = " + id);
-			System.out.println("Success deleting");
-		} else
-			System.out.println("DON't HAVE THIS ID!");
+		try {
+			System.out.println("Enter the ID of the product you want to REMOVE");
+			int id = in.nextInt();
+			if (isExistItem(id)) {
+				ps.executeUpdate("DELETE FROM Goods WHERE ID = " + id);
+				System.out.println("Success deleting");
+			} else
+				System.out.println("DON't HAVE THIS ID!");
+		} catch (NumberFormatException e) {
+			System.out.println("Write the correct data");
+		}
+
 	}
 
 	public static void infoPrice() throws SQLException {

@@ -4,24 +4,30 @@ import com.company.tableDataBase.TableData;
 import com.company.dataBaseConnect.ConnectDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-
-//xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+/**  ЗАМЕТКИ
+Если запрос выполняется часто и особенно с большим количеством условий,
+ то лучше использовать PreparedStatement, в таком случае производится
+ прекомпиляция и оптимизация запроса один раз, а не при каждом вызове.
+Если запрос используется не часто или простой, то можно использовать
+ обычный стейтмент, чтобы не забивать пул прекомпилированных стейтментов.
+ Либо делать выбор на основании удобства использования (см. предыдущие два ответа).
+xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+ */
 
 public class Controller implements Initializable {
-
-	@FXML
-	private Label labelForWriteAction;
 
 	//Called to initialize a controller after its root element has been
 	//  completely processed.
@@ -32,6 +38,17 @@ public class Controller implements Initializable {
 
 	private ObservableList<TableData> obList = FXCollections.observableArrayList();
 
+	@FXML
+	public TextField titleForChangeProduct;
+	@FXML
+	public TextField newPrice;
+
+	@FXML
+	public TextField min;
+	@FXML
+	public TextField max;
+	@FXML
+	private Label labelForWriteAction;
 
 	@FXML
 	private TextField prodidGUI;
@@ -41,9 +58,6 @@ public class Controller implements Initializable {
 
 	@FXML
 	private TextField costGUI;
-
-//	@FXML
-//	private Button searchButton;
 
 	@FXML
 	private TextField profileTextField;
@@ -73,12 +87,7 @@ public class Controller implements Initializable {
 			String text = profileTextField.getText();
 			switch (text) {
 				case "Show":
-					if (!table.getItems().isEmpty()) {
-						for (int i = 0; i < table.getItems().size(); i++) {
-							table.getItems().clear();
-						}
-
-					}
+					checkTableForEmptiness();
 					printInfoOnTable();
 					break;
 				case "Add":
@@ -108,10 +117,10 @@ public class Controller implements Initializable {
 	}
 
 	public void printInfoOnTable() throws SQLException {
+		checkTableForEmptiness();
 		ResultSet rs = ConnectDB.connection.createStatement().executeQuery("select * from Goods");
 
 		while (rs.next()) {
-
 			obList.add(new TableData(rs.getInt("id"), rs.getString("prodid"),
 					rs.getString("title"), rs.getInt("cost")));
 		}
@@ -126,26 +135,18 @@ public class Controller implements Initializable {
 
 	@FXML
 	public void searchOnPrice() throws SQLException {
-		String coefficientOfPrice = String.valueOf(slider.getValue());
 
 		PreparedStatement preparedStatement = ConnectDB.connection.prepareStatement("select * " +
 				"from Goods where cost = ?");
-		preparedStatement.setString(1, coefficientOfPrice);
+		preparedStatement.setString(1, String.valueOf(slider.getValue()));
 		ResultSet resultSet = preparedStatement.executeQuery();
 
-		if (!table.getItems().isEmpty()) {
-			for (int i = 0; i < table.getItems().size(); i++) {
-				table.getItems().clear();
-			}
-
-		}
+		checkTableForEmptiness();
 
 		while (resultSet.next()) {
-
 			obList.add(new TableData(resultSet.getInt("id"), resultSet.getString("prodid"),
 					resultSet.getString("title"), resultSet.getInt("cost")));
 		}
-
 		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 		prodidColumn.setCellValueFactory(new PropertyValueFactory<>("prodid"));
 		titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -156,42 +157,109 @@ public class Controller implements Initializable {
 
 	@FXML
 	private void addOnGuiTable() throws SQLException {
-		int prodid = Integer.parseInt(prodidGUI.getText());
-		String title = String.valueOf(titleGUI.getText());
-		int cost = Integer.parseInt(costGUI.getText());
+		try {
+			PreparedStatement ps = ConnectDB.connection.prepareStatement("INSERT INTO Goods " +
+					"(prodid, title, cost) VALUES (?, ?, ?)");
 
-		PreparedStatement ps = ConnectDB.connection.prepareStatement("INSERT INTO Goods " +
-				"(prodid, title, cost) VALUES (?, ?, ?)");
-
-		ps.setInt(1, prodid);
-		ps.setString(2, title);
-		ps.setInt(3, cost);
-		ps.executeUpdate();
-	printInfoOnTable();
-		labelForWriteAction.setText("Success");
+			ps.setInt(1, Integer.parseInt(prodidGUI.getText()));
+			ps.setString(2, String.valueOf(titleGUI.getText()));
+			ps.setInt(3, Integer.parseInt(costGUI.getText()));
+			ps.executeUpdate();
+			printInfoOnTable();
+			labelForWriteAction.setText("Success add");
+		} catch (NumberFormatException e) {
+			labelForWriteAction.setText("Write correct data");
+		}
 	}
 
-	/**
-	 * Не работает
-	 */
 	@FXML
 	private void deleteOnGuiTable() throws SQLException {
+		try {
+			labelForWriteAction.setText("");
 
-		int prodid = Integer.parseInt(prodidGUI.getText());
-		String title = String.valueOf(titleGUI.getText());
-		int cost = Integer.parseInt(costGUI.getText());
+			if (isExistItemProdid(prodidGUI.getText())) {
+				labelForWriteAction.setText("Success delete");
+			} else {
+				labelForWriteAction.setText("Write correct data");
+			}
 
-		PreparedStatement ps = ConnectDB.connection.prepareStatement("DELETE INTO Goods " +
-				"(prodid, title, cost) VALUES (?, ?, ?)");
+			PreparedStatement ps = ConnectDB.connection.prepareStatement("INSERT INTO goods " +
+					"prodid, title, cost) VALUES (?, ?, ?)");
 
-		ps.setInt(1, prodid);
-		ps.setString(2, title);
-		ps.setInt(3, cost);
-//		ps.executeUpdate();
 
-//			Main.ps.executeUpdate("DELETE FROM Goods WHERE title = " + title);
-		labelForWriteAction.setText("Deleted");
+			ps.executeUpdate("DELETE FROM Goods WHERE prodid = " +
+					Integer.parseInt(prodidGUI.getText()));
+
+
+			printInfoOnTable();
+
+		} catch (NumberFormatException e) {
+			labelForWriteAction.setText("Write correct data");
+		}
 	}
+
+	@FXML
+	public void searchPyCost(ActionEvent actionEvent) {
+		try {
+			labelForWriteAction.setText("");
+			PreparedStatement ps = ConnectDB.connection.prepareStatement("SELECT * FROM Goods WHERE cost BETWEEN " +
+					Integer.parseInt(min.getText()) + " AND " + Integer.parseInt(max.getText()));
+
+			ResultSet resultSet = ps.executeQuery();
+			checkTableForEmptiness();
+
+			while (resultSet.next()) {
+				obList.add(new TableData(resultSet.getInt("id"), resultSet.getString("prodid"),
+						resultSet.getString("title"), resultSet.getInt("cost")));
+			}
+			idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+			prodidColumn.setCellValueFactory(new PropertyValueFactory<>("prodid"));
+			titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+			costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
+
+			table.setItems(obList);
+		} catch (SQLException | NumberFormatException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	@FXML
+	public void changePrice() {
+		try {
+			if (isExistItemProdid(titleForChangeProduct.getText())) {
+				ConnectDB.statement.executeUpdate("UPDATE test.Goods SET cost = " + newPrice.getText() +
+						" WHERE prodid = '" + titleForChangeProduct.getText() + "'");
+				printInfoOnTable();
+			} else {
+				labelForWriteAction.setText("Don't have this product");
+			}
+		} catch (SQLException | NumberFormatException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void checkTableForEmptiness() {
+		if (!table.getItems().isEmpty()) {
+			for (int i = 0; i < table.getItems().size(); i++) {
+				table.getItems().clear();
+			}
+
+		}
+	}
+
+	boolean isExistItemProdid(String prodid) {
+		try {
+			ResultSet resultSet = ConnectDB.statement.executeQuery("SELECT * FROM test.goods " +
+					"WHERE prodid=" + prodid + ";");
+			return resultSet.next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 
 }
 
