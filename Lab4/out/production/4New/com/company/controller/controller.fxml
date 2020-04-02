@@ -49,7 +49,7 @@
             <Font name="Apple SD Gothic Neo Regular" size="15.0" />
          </font>
       </Button>
-      <Button layoutX="204.0" layoutY="58.0" mnemonicParsing="false" onAction="#deleteOnGuiTable" prefHeight="30.0" prefWidth="161.0" text="DeleteByProdid" textFill="RED">
+      <Button layoutX="204.0" layoutY="58.0" mnemonicParsing="false" onAction="#deleteOnGuiTable" prefHeight="30.0" prefWidth="161.0" text="Delete by prodid" textFill="RED">
          <font>
             <Font name="Apple SD Gothic Neo Regular" size="15.0" />
          </font>

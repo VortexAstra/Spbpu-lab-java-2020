@@ -4,7 +4,6 @@ import com.company.tableDataBase.TableData;
 import com.company.dataBaseConnect.ConnectDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -17,14 +16,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-/**  ЗАМЕТКИ
-Если запрос выполняется часто и особенно с большим количеством условий,
- то лучше использовать PreparedStatement, в таком случае производится
- прекомпиляция и оптимизация запроса один раз, а не при каждом вызове.
-Если запрос используется не часто или простой, то можно использовать
- обычный стейтмент, чтобы не забивать пул прекомпилированных стейтментов.
- Либо делать выбор на основании удобства использования (см. предыдущие два ответа).
-xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+/**
+ * ЗАМЕТКИ
+ * Если запрос выполняется часто и особенно с большим количеством условий,
+ * то лучше использовать PreparedStatement, в таком случае производится
+ * прекомпиляция и оптимизация запроса один раз, а не при каждом вызове.
+ * Если запрос используется не часто или простой, то можно использовать
+ * обычный стейтмент, чтобы не забивать пул прекомпилированных стейтментов.
+ * Либо делать выбор на основании удобства использования (см. предыдущие два ответа).
+ * xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
  */
 
 public class Controller implements Initializable {
@@ -116,47 +116,56 @@ public class Controller implements Initializable {
 
 	}
 
-	public void printInfoOnTable() throws SQLException {
-		checkTableForEmptiness();
-		ResultSet rs = ConnectDB.connection.createStatement().executeQuery("select * from Goods");
+	public void printInfoOnTable() {
+		try {
+			checkTableForEmptiness();
+			ResultSet rs = ConnectDB.connection.createStatement().executeQuery("select * from Goods");
 
-		while (rs.next()) {
-			obList.add(new TableData(rs.getInt("id"), rs.getString("prodid"),
-					rs.getString("title"), rs.getInt("cost")));
+			while (rs.next()) {
+				obList.add(new TableData(rs.getInt("id"), rs.getString("prodid"),
+						rs.getString("title"), rs.getInt("cost")));
+			}
+
+			idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+			prodidColumn.setCellValueFactory(new PropertyValueFactory<>("prodid"));
+			titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+			costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
+
+			table.setItems(obList);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-
-		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-		prodidColumn.setCellValueFactory(new PropertyValueFactory<>("prodid"));
-		titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-		costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
-
-		table.setItems(obList);
 	}
 
 	@FXML
-	public void searchOnPrice() throws SQLException {
+	public void searchOnPrice() {
+		try {
 
-		PreparedStatement preparedStatement = ConnectDB.connection.prepareStatement("select * " +
-				"from Goods where cost = ?");
-		preparedStatement.setString(1, String.valueOf(slider.getValue()));
-		ResultSet resultSet = preparedStatement.executeQuery();
 
-		checkTableForEmptiness();
+			PreparedStatement preparedStatement = ConnectDB.connection.prepareStatement("select * " +
+					"from Goods where cost = ?");
+			preparedStatement.setString(1, String.valueOf(slider.getValue()));
+			ResultSet resultSet = preparedStatement.executeQuery();
 
-		while (resultSet.next()) {
-			obList.add(new TableData(resultSet.getInt("id"), resultSet.getString("prodid"),
-					resultSet.getString("title"), resultSet.getInt("cost")));
+			checkTableForEmptiness();
+
+			while (resultSet.next()) {
+				obList.add(new TableData(resultSet.getInt("id"), resultSet.getString("prodid"),
+						resultSet.getString("title"), resultSet.getInt("cost")));
+			}
+			idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+			prodidColumn.setCellValueFactory(new PropertyValueFactory<>("prodid"));
+			titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+			costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
+
+			table.setItems(obList);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-		prodidColumn.setCellValueFactory(new PropertyValueFactory<>("prodid"));
-		titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-		costColumn.setCellValueFactory(new PropertyValueFactory<>("cost"));
-
-		table.setItems(obList);
 	}
 
 	@FXML
-	private void addOnGuiTable() throws SQLException {
+	private void addOnGuiTable()  {
 		try {
 			PreparedStatement ps = ConnectDB.connection.prepareStatement("INSERT INTO Goods " +
 					"(prodid, title, cost) VALUES (?, ?, ?)");
@@ -167,13 +176,13 @@ public class Controller implements Initializable {
 			ps.executeUpdate();
 			printInfoOnTable();
 			labelForWriteAction.setText("Success add");
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException | SQLException e) {
 			labelForWriteAction.setText("Write correct data");
 		}
 	}
 
 	@FXML
-	private void deleteOnGuiTable() throws SQLException {
+	private void deleteOnGuiTable()  {
 		try {
 			labelForWriteAction.setText("");
 
@@ -186,20 +195,17 @@ public class Controller implements Initializable {
 			PreparedStatement ps = ConnectDB.connection.prepareStatement("INSERT INTO goods " +
 					"prodid, title, cost) VALUES (?, ?, ?)");
 
-
 			ps.executeUpdate("DELETE FROM Goods WHERE prodid = " +
 					Integer.parseInt(prodidGUI.getText()));
 
-
 			printInfoOnTable();
-
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException  | SQLException e) {
 			labelForWriteAction.setText("Write correct data");
 		}
 	}
 
 	@FXML
-	public void searchPyCost(ActionEvent actionEvent) {
+	public void searchPyCost() {
 		try {
 			labelForWriteAction.setText("");
 			PreparedStatement ps = ConnectDB.connection.prepareStatement("SELECT * FROM Goods WHERE cost BETWEEN " +

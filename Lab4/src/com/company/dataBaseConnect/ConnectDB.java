@@ -2,8 +2,6 @@ package com.company.dataBaseConnect;
 
 import java.sql.*;
 
-import static java.lang.System.currentTimeMillis;
-
 public class ConnectDB {
 
 	public static Connection connection;

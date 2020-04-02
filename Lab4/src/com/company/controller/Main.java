@@ -26,7 +26,7 @@ public class Main extends Application {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		System.out.println("Доступные команды: \n 1 - Show  \n 2 - Add  \n 3 - Delete \n 4 - Price \n 5 - ChangePrice " +
+		System.out.println("Available command: \n 1 - Show  \n 2 - Add  \n 3 - Delete \n 4 - Price \n 5 - ChangePrice " +
 				"\n 6 - FilterByPrice  \n 7 - Graphics \n 8 - Exit ");
 
 		try {
