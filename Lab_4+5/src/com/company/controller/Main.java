@@ -8,7 +8,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main extends Application {
@@ -131,37 +133,46 @@ public class Main extends Application {
 	}
 
 	public static void changePrice() throws SQLException {
-		System.out.println("Enter the name of the product");
-		String title = in.nextLine();
-		String titleOfProduct = in.nextLine();
-		if (isExistItem(titleOfProduct)) {
-			System.out.print("Enter the new price\n");
-			int newPrice = in.nextInt();
-			ConnectDB.statement.executeUpdate("UPDATE test.Goods SET cost = " + newPrice +
-					" WHERE title = '" + titleOfProduct + "'");
-			System.out.println("Price changed successfully.");
-		} else
-			System.out.println("DON't HAVE THIS PRODUCT!");
+		try {
+			System.out.println("Enter the name of the product");
+			String title = in.nextLine();
+			String titleOfProduct = in.nextLine();
+			if (isExistItem(titleOfProduct)) {
+				System.out.print("Enter the new price\n");
+				int newPrice = in.nextInt();
+				ConnectDB.statement.executeUpdate("UPDATE test.Goods SET cost = " + newPrice +
+						" WHERE title = '" + titleOfProduct + "'");
+				System.out.println("Price changed successfully.");
+			} else
+				System.out.println("DON't HAVE THIS PRODUCT!");
+		} catch (InputMismatchException e) {
+			System.out.println("Need correct data");
+		}
+
 	}
 
 	public static void filterByPrice() throws SQLException {
-		System.out.println("From");
-		int firstNumber = in.nextInt();
-		System.out.println("Before");
-		int secondNumber = in.nextInt();
-		if ((firstNumber >= 0) && (secondNumber >= 0)) {
-			ResultSet resultSet = ConnectDB.statement.executeQuery("SELECT prodid, title " +
-					"FROM goods WHERE cost BETWEEN " + firstNumber + " AND " + secondNumber);
-			if (resultSet.next()) {
-				while (resultSet.next()) {
-					System.out.println("Prodid - " + resultSet.getString(1) + " Title - " +
-							resultSet.getString(2));
+		try {
+			System.out.println("From");
+			int firstNumber = in.nextInt();
+			System.out.println("Before");
+			int secondNumber = in.nextInt();
+			if ((firstNumber >= 0) && (secondNumber >= 0)) {
+				ResultSet resultSet = ConnectDB.statement.executeQuery("SELECT prodid, title " +
+						"FROM goods WHERE cost BETWEEN " + firstNumber + " AND " + secondNumber);
+				if (resultSet.next()) {
+					while (resultSet.next()) {
+						System.out.println("Prodid - " + resultSet.getString(1) + " Title - " +
+								resultSet.getString(2));
+					}
+				} else {
+					System.out.println("Your query did not return results.");
 				}
 			} else {
-				System.out.println("Your query did not return results.");
+				System.out.println("Enter positive numbers");
 			}
-		} else {
-			System.out.println("Enter positive numbers");
+		} catch (InputMismatchException e) {
+			System.out.println("Введите числа!!");
 		}
 	}
 
