@@ -70,7 +70,7 @@
       </Label>
       <TextField fx:id="titleForChangeProduct" layoutX="395.0" layoutY="160.0" prefHeight="27.0" prefWidth="122.0" promptText="Prodid" />
       <TextField fx:id="newPrice" layoutX="525.0" layoutY="160.0" prefHeight="27.0" prefWidth="122.0" promptText="New price" />
-      <Button layoutX="664.0" layoutY="160.0" mnemonicParsing="false" onAction="#changePrice" prefHeight="27.0" prefWidth="131.0" text="ChangePrice">
+      <Button layoutX="664.0" layoutY="160.0" mnemonicParsing="false" onAction="#changePrice" prefHeight="27.0" prefWidth="131.0" text="Change price">
          <font>
             <Font name="Apple SD Gothic Neo Regular" size="15.0" />
          </font></Button>
