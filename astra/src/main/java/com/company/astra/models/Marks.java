@@ -1,9 +1,7 @@
 package com.company.astra.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Marks {
@@ -13,6 +11,8 @@ public class Marks {
 	private Long id;
 
 	private Long student_id, subject_id, teacher_id, value;
+
+
 
 	public Long getId() {
 		return id;

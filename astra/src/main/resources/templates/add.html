@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Добавление группы</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+<header th:insert="section/header :: header"></header>
+
+<div class="container mt - 5 mb-5">
+
+    <h1>Добавление группы </h1>
+    <form action="/deanery/add" method="post">
+        <input type="text" name="name" placeholder="Введите имя группы" class="form-control"><br>
+        <button type="submit" class="btn btn-success "> Добавить группу </button><br>
+    </form>
+
+</div>
+
+<div th:insert="section/footer :: footer "></div>
+</body>
+</html>

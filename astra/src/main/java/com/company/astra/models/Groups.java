@@ -5,14 +5,20 @@ import java.io.Serializable;
 
 @Entity
 public class Groups implements Serializable {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	private Long id ;
+
 	private String name;
 
-	@ManyToOne
-	@JoinColumn
-	private People people;
+
+	public Groups(String name) {
+		this.name = name;
+	}
+
+	public Groups() {
+	}
 
 	public Long getId() {
 		return id;

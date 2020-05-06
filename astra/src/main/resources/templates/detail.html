@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Детали группы </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+<header th:insert="section/header :: header"></header>
+<div class="container mt - 5">
+
+    <div th:each="el : ${groupDetail}" class="alert alert-info mt-2" >
+        <h3 th:text="${el.getName()}"></h3>
+
+        <form th:action="'/deanery/' + ${el.id} + '/showAllInfo'" method="post" >
+            <button class="btn btn-warning" type="submit" >  Посмотреть группу </button>
+        </form>
+
+
+        <form th:action="'/deanery/' + ${el.id} + '/edit'" method="post">
+            <button class="btn btn-warning" type="submit"> Редактировать </button>
+        </form>
+
+        <form th:action="'/deanery/' + ${el.id} + '/remove'" method="post">
+            <button class="btn btn-warning" type="submit"> Удалить </button>
+        </form>
+
+    </div>
+
+</div>
+
+<div th:insert="section/footer :: footer "></div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title> Добавление группы</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+<header th:insert="section/header :: header"></header>
+
+<div class="container mt - 5 mb-5">
+
+    <h1>Поиск группы </h1>
+    <form action="/deanery/find" method="post">
+
+        <input type="text" name="nameGroup" placeholder="Введите имя группы" class="form-control"><br>
+        <button type="submit" class="btn btn-success "> Поиск</button>
+        <br>
+
+    </form>
+
+    <div th:each="el : ${groups}" class="alert alert-info mt-2">
+
+        <h3 th:text="${el.getName()}"></h3>
+        <a th:href="'/deanery/' + ${el.id}" class="btn btn-warning"> Детальнее </a>
+
+    </div>
+
+    <!--    <div th:each="el : ${groups}"  class="alert alert-info mt-2">-->
+    <!--        <h3 th:text="${el.getName()}"></h3>-->
+    <!--    </div>-->
+
+</div>
+
+<div th:insert="section/footer :: footer "></div>
+</body>
+</html>

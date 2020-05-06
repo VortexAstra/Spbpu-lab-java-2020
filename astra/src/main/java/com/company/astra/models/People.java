@@ -4,8 +4,7 @@ package com.company.astra.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 
 @Entity
@@ -17,13 +16,10 @@ public class People implements Serializable {
 
 	private String first_name, last_name, pather_name;
 
-	@ManyToOne
-	@JoinColumn
-	private Marks marks;
-
 	private Long group_id;
 
 	private String type;
+
 
 
 

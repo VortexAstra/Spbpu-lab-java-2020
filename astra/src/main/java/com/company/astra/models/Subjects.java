@@ -10,11 +10,6 @@ public class Subjects {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn
-	private Marks marks;
-
-
 	private String nameOfSubjects;
 
 	public Long getId() {
