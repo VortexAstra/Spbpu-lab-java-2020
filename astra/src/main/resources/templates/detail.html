@@ -18,6 +18,10 @@
         </form>
 
 
+        <form th:action="'/deanery/' + ${el.id} + '/schedule'" method="post">
+            <button class="btn btn-warning" type="submit"> Посмотреть расписание группы </button>
+        </form>
+
         <form th:action="'/deanery/' + ${el.id} + '/edit'" method="post">
             <button class="btn btn-warning" type="submit"> Редактировать </button>
         </form>
@@ -25,6 +29,8 @@
         <form th:action="'/deanery/' + ${el.id} + '/remove'" method="post">
             <button class="btn btn-warning" type="submit"> Удалить </button>
         </form>
+
+
 
     </div>
 

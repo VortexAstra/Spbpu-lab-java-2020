@@ -66,13 +66,23 @@ public class DeaneryController {
 		return "edit";
 	}
 
+	@PostMapping("/deanery/{id}/showAllInfo")
+	public String groupAllInfo(@PathVariable(value = "id") Long id, Model model) {
+		return "showAllInfo";
+	}
+
+
+	@PostMapping("/deanery/{id}/schedule")
+	public String groupSchedule(@PathVariable(value = "id") Long id, Model model) {
+		return "schedule";
+	}
+
 	@PostMapping("/deanery/{id}/remove")
 	public String groupDelete (@PathVariable(value = "id") Long id, Model model) {
 		Groups groups = groupRepository.findById(id).orElseThrow();
 		groupRepository.delete(groups);
 		return "redirect:/deanery";
 	}
-
 
 	@GetMapping("/deanery/find")
 	public String find(Model model){
