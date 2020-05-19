@@ -8,7 +8,6 @@ import com.company.astra.repo.IGroupRepository;
 import com.company.astra.repo.IMarksRepository;
 import com.company.astra.repo.IPeopleRepository;
 import com.company.astra.repo.ISubjectsRepository;
-import org.apache.tomcat.util.net.jsse.PEMFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +17,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.Random;
 
 @Controller
 public class DeaneryController {
@@ -77,7 +76,7 @@ public class DeaneryController {
 							@RequestParam(required = false) String type,
 							Model model) {
 
-//сделать ссылку вместо этого говна href .. . . .
+
 
 		Optional<Groups> groups = groupRepository.findById(id);
 //		var groupID = groups.get();
@@ -147,15 +146,8 @@ public class DeaneryController {
 			var one = uniquePeople.get();
 			model.addAttribute("one", one);
 		}
-//		Marks marks = marksRepository.fin
-//		Optional<People> people = peopleRepository.findById(id);
-//		Subjects subjects = subjectsRepository.findSubjectsById(id);
-
-//		model.addAttribute("people", people);
-
-//		model.addAttribute("subjects", subjects);
-//		model.addAttribute("people", people);
-//		model.addAttribute("marks", marks);
+		List<Marks> marks = marksRepository.findByStudentId(id);
+		model.addAttribute("marks", marks);
 
 
 		return "progress";
@@ -173,18 +165,22 @@ public class DeaneryController {
 							Model model) {
 
 		Marks marks = new Marks(rating);
-		marks.setStudent_id(id);
+		marks.setStudentId(id);
+		Random random = new Random();
+		long num = random.nextInt(100);
+
+		marks.setTeacher_id(num);
 
 		Subjects subjects = new Subjects(subject);
 		subjectsRepository.save(subjects);
 
 		Subjects subjects1 = subjectsRepository.findByNameOfSubjects(subject);
-		marks.setSubject_id(subjects1.getId());
+		marks.setSubjectId(subjects1.getId());
 		marks.setSubjects(subjects1);
 
 		marksRepository.save(marks);
 
-		return "addRating";
+		return "redirect:/deanery/{id}/progress";
 	}
 
 	@GetMapping("/deanery/{id}/progress/deleteRating")
@@ -209,7 +205,6 @@ public class DeaneryController {
 	public String deletePeople(@PathVariable(value = "id") Long id, Model model) {
 		People people = peopleRepository.findById(id).orElseThrow();
 		peopleRepository.delete(people);
-
 
 		return "redirect:/deanery";
 	}

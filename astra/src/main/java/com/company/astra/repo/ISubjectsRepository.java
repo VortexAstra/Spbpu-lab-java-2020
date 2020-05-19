@@ -9,6 +9,7 @@ public interface ISubjectsRepository extends CrudRepository<Subjects, Long> {
 	Subjects findByNameOfSubjects(String subjects);
 	void deleteByNameOfSubjects(String s);
 	Subjects findSubjectsById(Long in);
+	Subjects findIdByNameOfSubjects(String s);
 
 
 }

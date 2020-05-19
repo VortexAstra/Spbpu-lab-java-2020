@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface IPeopleRepository extends JpaRepository<People, Long> {
 	List<People> findAll();
-
+//	List<People> findPeopleBySubjectName();
 	List<People> findPeopleByFirstName(String  name);
 	List<People> getAllByGroups(Optional<Groups> groups);
 

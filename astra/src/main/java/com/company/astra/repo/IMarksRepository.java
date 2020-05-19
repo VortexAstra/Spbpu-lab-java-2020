@@ -12,7 +12,8 @@ import java.util.List;
 @Repository
 public interface IMarksRepository extends JpaRepository<Marks, Long> {
 	List<Marks> findAll();
-
+	List<Marks> findByStudentId(Long id);
+	Long findSubjectIDByStudentId(Long id);
 //	void deleteSubjectsByValue(Long value);
 
 

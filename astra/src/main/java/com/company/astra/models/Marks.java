@@ -1,7 +1,8 @@
 package com.company.astra.models;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 public class Marks {
@@ -10,18 +11,18 @@ public class Marks {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	private Long student_id, subject_id, teacher_id, value;
+	private Long studentId, subjectId, teacher_id, value;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "marks.subject_id", referencedColumnName = "id")
 	private Subjects subjects;
 
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "marks.student_id", referencedColumnName = "id")
 	private Subjects subjectsMarks;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "marks.teacher_id", referencedColumnName = "id")
 	private Subjects subjectsMarksTeacher;
 
@@ -64,20 +65,20 @@ public Marks(){}
 		this.id = id;
 	}
 
-	public Long getStudent_id() {
-		return student_id;
+	public Long getStudentId() {
+		return studentId;
 	}
 
-	public void setStudent_id(Long student_id) {
-		this.student_id = student_id;
+	public void setStudentId(Long student_id) {
+		this.studentId = student_id;
 	}
 
-	public Long getSubject_id() {
-		return subject_id;
+	public Long getSubjectId() {
+		return subjectId;
 	}
 
-	public void setSubject_id(Long subject_id) {
-		this.subject_id = subject_id;
+	public void setSubjectId(Long subject_id) {
+		this.subjectId = subject_id;
 	}
 
 	public Long getTeacher_id() {

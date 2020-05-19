@@ -16,7 +16,7 @@ public class Subjects {
 
 	@OneToMany(
 			mappedBy = "subjectsMarks",
-			cascade = CascadeType.PERSIST,
+			cascade = CascadeType.REMOVE,
 			fetch = FetchType.LAZY
 	)
 	private Set<Marks> marks;

@@ -16,18 +16,18 @@
     <div class="alert alert-info mt-3">
 
     </div>
-        <form action="#" th:action="@{'/deanery/' + ${id} + '/edit'}" method="post">
+    <form th:action="'/deanery/' + ${id} + '/edit'" method="post">
 
-            <input type="text" name="first" placeholder="Введите имя нового ученика" class="form-control"><br>
-            <input type="text" name="second" placeholder="Введите фамилию нового ученика" class="form-control"><br>
-            <input type="text" name="third" placeholder="Введите отчество нового ученика" class="form-control"><br>
-            <input type="text" name="type" placeholder="Тип ученика" class="form-control"><br>
+        <input type="text" name="first" placeholder="Введите имя нового ученика" class="form-control"><br>
+        <input type="text" name="second" placeholder="Введите фамилию нового ученика" class="form-control"><br>
+        <input type="text" name="third" placeholder="Введите отчество нового ученика" class="form-control"><br>
+        <input type="text" name="type" placeholder="Тип ученика" class="form-control"><br>
 
-            <button type="submit" class="btn btn-success "> Обновить</button>
-            <br>
-        </form>
-    </div>
-    </div>
+        <button type="submit" class="btn btn-success "> Обновить</button>
+        <br>
+    </form>
+</div>
+</div>
 </div>
 
 <div th:insert="section/footer :: footer "></div>

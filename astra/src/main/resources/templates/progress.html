@@ -58,20 +58,29 @@
         <tr>
             <th>Предмет</th>
             <th>Оценка</th>
+            <th>Id учителя</th>
         </tr>
         <tr>
             <td>
 
-                <div th:each="el : ${one}" class="alert alert-info mt-2">
-                    <h3 th:text="${one.getMarksPeople()}"></h3>
+                <div th:each="el : ${marks}" class="alert alert-info mt-2">
+                    <h3 th:text="${el.subjects.getNameOfSubjects()}"></h3>
                 </div>
 
             </td>
             <td>
 
-<!--                <div th:each="el : ${people}" class="alert alert-info mt-2">-->
-<!--                    <h3 th:text="${}"></h3>-->
-<!--                </div>-->
+                <div th:each="el : ${marks}" class="alert alert-info mt-2">
+                    <h3 th:text="${el.getValue()}"></h3>
+                </div>
+
+            </td>
+
+            <td>
+
+                <div th:each="el : ${marks}" class="alert alert-info mt-2">
+                    <h3 th:text="${el.getTeacher_id()}"></h3>
+                </div>
 
             </td>
 
