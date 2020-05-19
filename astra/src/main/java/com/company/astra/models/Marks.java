@@ -12,7 +12,49 @@ public class Marks {
 
 	private Long student_id, subject_id, teacher_id, value;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "marks.subject_id", referencedColumnName = "id")
+	private Subjects subjects;
 
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "marks.student_id", referencedColumnName = "id")
+	private Subjects subjectsMarks;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "marks.teacher_id", referencedColumnName = "id")
+	private Subjects subjectsMarksTeacher;
+
+public Marks(){}
+
+	public Marks(Long rating) {
+		this.value = rating;
+	}
+
+
+	public Subjects getSubjects() {
+		return subjects;
+	}
+
+	public void setSubjects(Subjects subjects) {
+		this.subjects = subjects;
+	}
+
+	public Subjects getSubjectsMarks() {
+		return subjectsMarks;
+	}
+
+	public void setSubjectsMarks(Subjects subjectsMarks) {
+		this.subjectsMarks = subjectsMarks;
+	}
+
+	public Subjects getSubjectsMarksTeacher() {
+		return subjectsMarksTeacher;
+	}
+
+	public void setSubjectsMarksTeacher(Subjects subjectsMarksTeacher) {
+		this.subjectsMarksTeacher = subjectsMarksTeacher;
+	}
 
 	public Long getId() {
 		return id;

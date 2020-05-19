@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.Set;
 
 
-
 @Entity
 public class People implements Serializable {
 
@@ -14,14 +13,71 @@ public class People implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	private String first_name, last_name, pather_name;
-
+	private String firstName, last_name, pather_name;
 	private Long group_id;
+	private String type; //  Char S/P/ Student Prepodavatel'
 
-	private String type;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "people.group_id", referencedColumnName = "id")
+	public Groups groups;
+
+
+	public Set<Marks> getMarksPeople() {
+		return marksPeople;
+	}
+
+	public void setMarksPeople(Set<Marks> marksPeople) {
+		this.marksPeople = marksPeople;
+	}
+
+	public Set<Marks> getMarksTeacher() {
+		return marksTeacher;
+	}
+
+	public void setMarksTeacher(Set<Marks> marksTeacher) {
+		this.marksTeacher = marksTeacher;
+	}
+
+	@OneToMany(
+			mappedBy = "subjectsMarks",
+			cascade = CascadeType.PERSIST,
+			fetch = FetchType.LAZY
+	)
+	private Set<Marks> marksPeople;
+
+	@OneToMany(
+			mappedBy = "subjectsMarksTeacher",
+			cascade = CascadeType.PERSIST,
+			fetch = FetchType.LAZY
+	)
+	private Set<Marks> marksTeacher;
 
 
 
+	public People() {
+	}
+
+	public People(String first_name, String last_name, String pather_name, String type, Long group_id, Groups groups) {
+		this.firstName = first_name;
+		this.last_name = last_name;
+		this.pather_name = pather_name;
+		this.type = type;
+		this.group_id = group_id;
+		this.groups = groups;
+	}
+
+	public People(String name1) {
+		this.firstName = name1;
+	}
+
+
+	public Groups getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Groups groups) {
+		this.groups = groups;
+	}
 
 	public Long getId() {
 		return id;
@@ -39,12 +95,12 @@ public class People implements Serializable {
 		this.group_id = group_id;
 	}
 
-	public String getFirst_name() {
-		return first_name;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFirst_name(String first_name) {
-		this.first_name = first_name;
+	public void setFirstName(String first_name) {
+		this.firstName = first_name;
 	}
 
 	public String getLast_name() {

@@ -7,6 +7,14 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
+<style>
+
+    button{
+        margin-top: 5px; /* уменьшите на свой вкус  */
+        margin-bottom: 5px; /* здесь тоже */
+    }
+
+</style>
 <header th:insert="section/header :: header"></header>
 <div class="container mt - 5">
 
@@ -14,20 +22,20 @@
         <h3 th:text="${el.getName()}"></h3>
 
         <form th:action="'/deanery/' + ${el.id} + '/showAllInfo'" method="post" >
-            <button class="btn btn-warning" type="submit" >  Посмотреть группу </button>
+            <button class="btn btn-warning" type="submit" >  Посмотреть группу </button> <br>
         </form>
 
 
         <form th:action="'/deanery/' + ${el.id} + '/schedule'" method="post">
-            <button class="btn btn-warning" type="submit"> Посмотреть расписание группы </button>
+            <button class="btn btn-warning" type="submit"> Посмотреть расписание группы </button><br>
         </form>
 
         <form th:action="'/deanery/' + ${el.id} + '/edit'" method="post">
-            <button class="btn btn-warning" type="submit"> Редактировать </button>
+            <button class="btn btn-warning" type="submit"> Редактировать </button><br>
         </form>
 
         <form th:action="'/deanery/' + ${el.id} + '/remove'" method="post">
-            <button class="btn btn-warning" type="submit"> Удалить </button>
+            <button class="btn btn-danger" type="submit"> Удалить </button><br>
         </form>
 
 

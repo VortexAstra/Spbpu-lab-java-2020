@@ -1,8 +1,19 @@
 package com.company.astra.repo;
 
 import com.company.astra.models.Marks;
+import com.company.astra.models.People;
+import com.company.astra.models.Subjects;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface IMarksRepository extends CrudRepository<Marks, Long> {
+import java.util.List;
+
+@Repository
+public interface IMarksRepository extends JpaRepository<Marks, Long> {
+	List<Marks> findAll();
+
+//	void deleteSubjectsByValue(Long value);
+
 
 }

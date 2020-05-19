@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Успеваемость ученика</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+
+<body>
+<header th:insert="section/header :: header"></header>
+
+<div class="container mt - 5">
+    <h1> Прогресс </h1>
+</div>
+
+<div class="container">
+    <!-- Любой код -->
+    <div>
+        <!--        <form action="/deanery/{id}/progress/addRating">-->
+        <div th:each="el : ${one}">
+            <div >
+            <a th:href="'/deanery/' + ${one.id} + '/progress/addRating'" class="btn btn-success"> Проставить оценку по
+                предмету </a>
+            </div>
+        </div>
+
+        </form>
+    </div>
+
+    <div>
+        <div th:each="el : ${one}">
+            <a th:href="'/deanery/' + ${one.id} + '/progress/deleteRating'" class="btn btn-success"> Удалить оценку по
+                предмету </a>
+        </div>
+        <br>
+    </div>
+
+</div>
+
+<style>
+    table {
+        width: 100%; /* Ширина таблицы */
+        background: white; /* Цвет фона таблицы */
+        color: black; /* Цвет текста */
+        border-spacing: 1px; /* Расстояние между ячейками */
+    }
+
+    td, th {
+        background: cornsilk; /* Цвет фона ячеек */
+        padding: 5px; /* Поля вокруг текста */
+    }
+</style>
+
+<div class="container">
+    <table>
+        <tr>
+            <th>Предмет</th>
+            <th>Оценка</th>
+        </tr>
+        <tr>
+            <td>
+
+                <div th:each="el : ${one}" class="alert alert-info mt-2">
+                    <h3 th:text="${one.getMarksPeople()}"></h3>
+                </div>
+
+            </td>
+            <td>
+
+<!--                <div th:each="el : ${people}" class="alert alert-info mt-2">-->
+<!--                    <h3 th:text="${}"></h3>-->
+<!--                </div>-->
+
+            </td>
+
+            <!--        <td>-->
+
+            <!--            <div th:each="el : ${people}" class="alert alert-info mt-2">-->
+            <!--                <h3 th:text="${el.getType()}" >  </h3>-->
+            <!--            </div>-->
+
+            <!--        </td>-->
+
+        </tr>
+    </table>
+</div>
+
+<div th:insert="section/footer :: footer "></div>
+</body>
+</html>

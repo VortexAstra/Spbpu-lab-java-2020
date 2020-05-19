@@ -1,17 +1,24 @@
 package com.company.astra.controllers;
 
 import com.company.astra.models.Groups;
+import com.company.astra.models.Marks;
+import com.company.astra.models.People;
+import com.company.astra.models.Subjects;
 import com.company.astra.repo.IGroupRepository;
 import com.company.astra.repo.IMarksRepository;
 import com.company.astra.repo.IPeopleRepository;
 import com.company.astra.repo.ISubjectsRepository;
+import org.apache.tomcat.util.net.jsse.PEMFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class DeaneryController {
@@ -51,24 +58,58 @@ public class DeaneryController {
 
 	@GetMapping("/deanery/{id}")
 	public String groupDetail(@PathVariable(value = "id") Long id, Model model) {
-		if (!groupRepository.existsById(id)){
+		if (!groupRepository.existsById(id)) {
 			return "redirect:/deanery";
 		}
+
 		Optional<Groups> groupDetail = groupRepository.findById(id);
 		ArrayList<Groups> res = new ArrayList<>();
 		groupDetail.ifPresent(res::add);
-		model.addAttribute( "groupDetail", res);
+		model.addAttribute("groupDetail", res);
 		return "detail";
 	}
 
 	@PostMapping("/deanery/{id}/edit")
-	public String groupEdit(@PathVariable(value = "id") Long id, Model model) {
+	public String groupEdit(@PathVariable(value = "id") Long id,
+							@RequestParam(required = false) String first,
+							@RequestParam(required = false) String second,
+							@RequestParam(required = false) String third,
+							@RequestParam(required = false) String type,
+							Model model) {
+
+//сделать ссылку вместо этого говна href .. . . .
+
+		Optional<Groups> groups = groupRepository.findById(id);
+//		var groupID = groups.get();
+//		model.addAttribute("groupID", groupID);
+
+		if (groups.isPresent()) {
+			People people = new People(first, second, third, type, id, groups.get());
+			peopleRepository.save(people);
+			return "edit";
+		}
 		return "edit";
 	}
 
 	@PostMapping("/deanery/{id}/showAllInfo")
-	public String groupAllInfo(@PathVariable(value = "id") Long id, Model model) {
+	public String groupAllInfo(@PathVariable(value = "id") Long id,
+							   Model model) {
+		Iterable<People> peopleInGroup = peopleRepository.getAllByGroups(groupRepository.findById(id));
+		model.addAttribute("peopleInGroup", peopleInGroup);
 		return "showAllInfo";
+	}
+
+	@PostMapping("/deanery/findPeopleInGroup")
+	public String findPeopleByName(@RequestParam String namePeople, Model model) {
+		Iterable<People> people = peopleRepository.findPeopleByFirstName(namePeople);
+		model.addAttribute("people", people);
+		return "findPeopleInGroup";
+	}
+
+	@GetMapping("/deanery/findPeopleInGroup")
+	public String findPeopleByName(Model model) {
+
+		return "findPeopleInGroup";
 	}
 
 
@@ -78,14 +119,14 @@ public class DeaneryController {
 	}
 
 	@PostMapping("/deanery/{id}/remove")
-	public String groupDelete (@PathVariable(value = "id") Long id, Model model) {
+	public String groupDelete(@PathVariable(value = "id") Long id, Model model) {
 		Groups groups = groupRepository.findById(id).orElseThrow();
 		groupRepository.delete(groups);
 		return "redirect:/deanery";
 	}
 
 	@GetMapping("/deanery/find")
-	public String find(Model model){
+	public String find(Model model) {
 		return "find";
 	}
 
@@ -97,5 +138,80 @@ public class DeaneryController {
 	}
 
 
+	@GetMapping("/deanery/{id}/progress")
+	public String peopleProgress(@PathVariable(value = "id") Long id,
+								 Model model) {
+		Optional<People> uniquePeople = peopleRepository.findById(id);
+
+		if (uniquePeople.isPresent()) {
+			var one = uniquePeople.get();
+			model.addAttribute("one", one);
+		}
+//		Marks marks = marksRepository.fin
+//		Optional<People> people = peopleRepository.findById(id);
+//		Subjects subjects = subjectsRepository.findSubjectsById(id);
+
+//		model.addAttribute("people", people);
+
+//		model.addAttribute("subjects", subjects);
+//		model.addAttribute("people", people);
+//		model.addAttribute("marks", marks);
+
+
+		return "progress";
+	}
+
+	@GetMapping("/deanery/{id}/progress/addRating")
+	public String addRating(@PathVariable(value = "id") Long id, Model model) {
+		return "addRating";
+	}
+
+	@PostMapping("/deanery/{id}/progress/addRating")
+	public String addRating(@PathVariable(value = "id") Long id,
+							@RequestParam(required = false) String subject,
+							@RequestParam(required = false) Long rating,
+							Model model) {
+
+		Marks marks = new Marks(rating);
+		marks.setStudent_id(id);
+
+		Subjects subjects = new Subjects(subject);
+		subjectsRepository.save(subjects);
+
+		Subjects subjects1 = subjectsRepository.findByNameOfSubjects(subject);
+		marks.setSubject_id(subjects1.getId());
+		marks.setSubjects(subjects1);
+
+		marksRepository.save(marks);
+
+		return "addRating";
+	}
+
+	@GetMapping("/deanery/{id}/progress/deleteRating")
+	public String deleteRating(@PathVariable(value = "id") Long id,
+							   Model model) {
+		return "deleteRating";
+	}
+
+
+	@Transactional
+	@PostMapping("/deanery/{id}/progress/deleteRating")
+	public String deleteRating(@PathVariable(value = "id") Long id,
+							   @RequestParam String subject) {
+		if (peopleRepository.findById(id).isPresent()) {
+			subjectsRepository.deleteByNameOfSubjects(subject);
+		}
+
+		return "deleteRating";
+	}
+
+	@PostMapping("/deanery/{id}/deletePeople")
+	public String deletePeople(@PathVariable(value = "id") Long id, Model model) {
+		People people = peopleRepository.findById(id).orElseThrow();
+		peopleRepository.delete(people);
+
+
+		return "redirect:/deanery";
+	}
 
 }
