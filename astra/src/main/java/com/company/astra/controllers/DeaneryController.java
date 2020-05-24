@@ -77,7 +77,6 @@ public class DeaneryController {
 							Model model) {
 
 
-
 		Optional<Groups> groups = groupRepository.findById(id);
 //		var groupID = groups.get();
 //		model.addAttribute("groupID", groupID);
@@ -94,6 +93,12 @@ public class DeaneryController {
 	public String groupAllInfo(@PathVariable(value = "id") Long id,
 							   Model model) {
 		Iterable<People> peopleInGroup = peopleRepository.getAllByGroups(groupRepository.findById(id));
+		for (var item: peopleInGroup)
+		{
+			if (item.getFirstName() == null) {
+				peopleRepository.delete(item);
+			}
+		}
 		model.addAttribute("peopleInGroup", peopleInGroup);
 		return "showAllInfo";
 	}
@@ -198,7 +203,7 @@ public class DeaneryController {
 			subjectsRepository.deleteByNameOfSubjects(subject);
 		}
 
-		return "deleteRating";
+		return "redirect:/deanery/{id}/progress";
 	}
 
 	@PostMapping("/deanery/{id}/deletePeople")
